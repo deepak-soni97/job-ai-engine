@@ -369,7 +369,7 @@ export const JobModal: React.FC<JobModalProps> = ({ job, onClose, onDirectApply 
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
               <AlertCircle className="w-4 h-4 text-blue-600" /> Official Step-by-Step Application Procedure
             </h4>
-            <div className="text-xs sm:text-sm font-medium text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-100 whitespace-pre-wrap leading-relaxed">
+            <div className="text-xs sm:text-sm font-medium text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-200 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-300">
               {job.applyProcedure || "Download application form from official website, fill out required details, attach self-attested documents, and submit as per notification instructions."}
             </div>
           </div>

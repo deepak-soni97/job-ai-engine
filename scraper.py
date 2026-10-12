@@ -97,7 +97,7 @@ def scrape_jobs():
                                                 nxt = nxt.find_next_sibling()
                                             if procedure_texts:
                                                 full_text = "\n\n".join(procedure_texts)
-                                                apply_procedure = full_text[:800]
+                                                apply_procedure = full_text.strip()
                                             
                                         if "Important Links" in h_text:
                                             table = heading.find_next_sibling('table')
