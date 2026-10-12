@@ -169,17 +169,19 @@ cd job-ai-engine
    npm install
    ```
 
-3. **Configure environment variables**:
+3. **Configure environment variables (For Local Run)**:
    Create a `frontend/.env` file:
    ```env
+   # Local development (runs on your computer)
    VITE_API_BASE_URL=http://localhost:8000
    ```
+   > 💡 **Note for Production/Live Deployment**: When deploying live to **Render** or **Vercel**, replace `http://localhost:8000` with your actual live backend URL (e.g. `https://job-ai-backend.onrender.com`).
 
 4. **Start Vite development server**:
    ```powershell
    npm run dev
    ```
-   > Frontend will be live at: **http://localhost:5173**
+   > Frontend will be live locally at: **http://localhost:5173**
 
 5. **Check code quality (Optional)**:
    ```powershell
@@ -192,7 +194,7 @@ cd job-ai-engine
 ## ⚙️ Environment Variables
 
 ### Backend (`.env` in root)
-| Variable | Default | Description |
+| Variable | Local Default | Description |
 | :--- | :--- | :--- |
 | `HOST` | `0.0.0.0` | Bind host address |
 | `PORT` | `8000` | Server port |
@@ -201,9 +203,9 @@ cd job-ai-engine
 | `PERIODIC_SYNC_INTERVAL_SECONDS` | `1800` | Background scraper & expiry interval (30 min) |
 
 ### Frontend (`frontend/.env`)
-| Variable | Default | Description |
-| :--- | :--- | :--- |
-| `VITE_API_BASE_URL` | `http://localhost:8000` | Backend API base URL |
+| Variable | Local Development | Production / Live Deploy | Description |
+| :--- | :--- | :--- | :--- |
+| `VITE_API_BASE_URL` | `http://localhost:8000` | `https://job-ai-backend.onrender.com` | Backend API URL (Local vs Cloud URL) |
 
 ---
 
