@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 64" width="260" height="64" fill="none">
+  <defs>
+    <linearGradient id="logoBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E40AF" />
+      <stop offset="50%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#4F46E5" />
+    </linearGradient>
+
+    <linearGradient id="logoSparkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#34D399" />
+    </linearGradient>
+
+    <linearGradient id="aiTextGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#4F46E5" />
+    </linearGradient>
+  </defs>
+
+  <!-- Left Icon Mark (64x64 scale) -->
+  <g transform="translate(4, 4)">
+    <rect x="0" y="0" width="56" height="56" rx="15" fill="url(#logoBgGrad)" stroke="#60A5FA" stroke-width="1.5" stroke-opacity="0.4" />
+    
+    <!-- Govt Pediment -->
+    <path d="M14 23 L28 14 L42 23 Z" fill="#FFFFFF" />
+    <rect x="13" y="23.5" width="30" height="2" rx="1" fill="#CBD5E1" />
+
+    <!-- Pillars -->
+    <rect x="16" y="27" width="3.5" height="13" rx="1" fill="#FFFFFF" />
+    <rect x="23" y="27" width="3.5" height="13" rx="1" fill="#FFFFFF" />
+    <rect x="30" y="27" width="3.5" height="13" rx="1" fill="#FFFFFF" />
+    <rect x="37" y="27" width="3.5" height="13" rx="1" fill="#FFFFFF" />
+
+    <!-- Base -->
+    <rect x="12.5" y="41.5" width="31" height="2.5" rx="1" fill="#FFFFFF" />
+
+    <!-- Central Spark -->
+    <circle cx="28" cy="33.5" r="6" fill="#0F172A" stroke="url(#logoSparkGrad)" stroke-width="1.5" />
+    <path d="M28 29.5 L29 32.5 L32 33.5 L29 34.5 L28 37.5 L27 34.5 L24 33.5 L27 32.5 Z" fill="url(#logoSparkGrad)" />
+
+    <!-- Beacon -->
+    <circle cx="28" cy="11.5" r="2" fill="url(#logoSparkGrad)" />
+  </g>
+
+  <!-- Brand Typography -->
+  <text x="76" y="36" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="900" fill="#0F172A" letter-spacing="-0.5">GovtTech<tspan fill="url(#aiTextGrad)"> AI</tspan></text>
+  
+  <rect x="202" y="19" width="48" height="16" rx="4" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1" />
+  <text x="226" y="30.5" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" font-size="9" font-weight="800" fill="#2563EB" text-anchor="middle" letter-spacing="1">ENGINE</text>
+
+  <text x="76" y="49" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" font-size="10" font-weight="700" fill="#64748B" letter-spacing="1.2">SMART JOB DISCOVERY</text>
+</svg>
