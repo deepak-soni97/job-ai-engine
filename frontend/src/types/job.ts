@@ -17,6 +17,7 @@ export interface Job {
   department: string;
   selectionMode: string;
   date: string;
+  deadlineDate?: string;
   reqDegree: string;
   reqExp: string;
   sector: string;

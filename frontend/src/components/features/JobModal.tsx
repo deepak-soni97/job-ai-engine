@@ -2,6 +2,8 @@ import React from 'react';
 import { X, CheckCircle2, AlertCircle, Banknote, Users, MapPin, Clock, Award, FileText, Briefcase, ExternalLink, XCircle, Eye } from 'lucide-react';
 import type { PositionDetail, JobModalProps } from '../../types';
 import { TagBadge } from './TagBadge';
+import { ProcedureViewer } from './ProcedureViewer';
+import { FeeViewer } from './FeeViewer';
 
 export type { JobModalProps };
 
@@ -338,22 +340,20 @@ export const JobModal: React.FC<JobModalProps> = ({ job, onClose, onDirectApply 
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                  <AlertCircle className="w-4 h-4 text-blue-600" /> Application Fees (Online Processing)
+                  <Banknote className="w-4 h-4 text-emerald-600" /> Application Fees (Online Processing)
                 </h4>
-                <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                   Official Rate
                 </span>
               </div>
-              <p className="text-xs sm:text-sm font-medium text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100 min-h-[4rem] leading-relaxed">
-                {job.feeText || "Nil / As per notification"}
-              </p>
+              <FeeViewer feeText={job.feeText} />
             </div>
 
             <div>
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-blue-600" /> Mandatory Checklist
               </h4>
-              <ul className="space-y-1.5 bg-slate-50 p-3 rounded-xl border border-slate-100 min-h-[4rem]">
+              <ul className="space-y-1.5 bg-slate-50 p-3 rounded-xl border border-slate-200/80 min-h-[4rem]">
                 {job.documents.map((doc: string, idx: number) => (
                   <li key={idx} className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
@@ -366,12 +366,15 @@ export const JobModal: React.FC<JobModalProps> = ({ job, onClose, onDirectApply 
 
           {/* How to Apply Procedure */}
           <div>
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <AlertCircle className="w-4 h-4 text-blue-600" /> Official Step-by-Step Application Procedure
-            </h4>
-            <div className="text-xs sm:text-sm font-medium text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-200 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-300">
-              {job.applyProcedure || "Download application form from official website, fill out required details, attach self-attested documents, and submit as per notification instructions."}
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                <AlertCircle className="w-4 h-4 text-blue-600" /> Official Step-by-Step Application Procedure
+              </h4>
+              <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                Interactive Guide
+              </span>
             </div>
+            <ProcedureViewer procedureText={job.applyProcedure} deadlineDate={job.deadlineDate || job.date} />
           </div>
 
         </div>
