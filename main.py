@@ -19,6 +19,19 @@ load_dotenv()
 # Global container for model state
 ml_models = {}
 
+def get_embedding_model():
+    """Lazily loads SentenceTransformer on-demand to maintain minimal memory footprint."""
+    if "embedding_model" not in ml_models:
+        try:
+            print("Lazily loading SentenceTransformer model...")
+            from sentence_transformers import SentenceTransformer
+            ml_models["embedding_model"] = SentenceTransformer("all-MiniLM-L6-v2")
+            print("SentenceTransformer loaded successfully.")
+        except Exception as e:
+            print(f"Notice: SentenceTransformer not loaded ({e}). Semantic search fallback active.")
+            ml_models["embedding_model"] = None
+    return ml_models.get("embedding_model")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -26,15 +39,9 @@ async def lifespan(app: FastAPI):
     import database
     import live_sync
 
-    # STARTUP: Load model once at application start
-    print("Loading Sentence-Transformer model into memory...")
-    ml_models["embedding_model"] = SentenceTransformer("all-MiniLM-L6-v2")
-    print("Model loaded successfully!")
-
-    # Initialize SQLite Database & Migrate JSON data if needed
+    # Fast & Lightweight Startup: DB check and cleanup only (Uses ~40MB RAM)
     print("Initializing SQLite Database (jobs.db)...")
     database.init_db()
-    database.migrate_from_json("jobs_data.json", embedding_model=ml_models.get("embedding_model"))
     expired_cnt = database.auto_expire_jobs()
     dedup_cnt = database.deduplicate_all_jobs()
     if expired_cnt > 0 or dedup_cnt > 0:
@@ -347,7 +354,7 @@ def health_check():
 
 @app.post("/check-job-match", response_model=EligibilityResponse)
 def check_job_match(request: JobEligibilityCheckRequest) -> EligibilityResponse:
-    model: SentenceTransformer = ml_models.get("embedding_model")
+    model = get_embedding_model()
     if not model:
         raise HTTPException(status_code=503, detail="AI Inference model is not ready")
 
@@ -364,7 +371,7 @@ def check_job_match(request: JobEligibilityCheckRequest) -> EligibilityResponse:
 
 @app.post("/match-from-url", response_model=EligibilityResponse)
 async def match_from_url(request: URLMatchRequest) -> EligibilityResponse:
-    model: SentenceTransformer = ml_models.get("embedding_model")
+    model = get_embedding_model()
     if not model:
         raise HTTPException(status_code=503, detail="AI Inference model is not ready")
 
@@ -655,10 +662,13 @@ def search_jobs(
         include_expired=False
     )
 
-    model = ml_models.get("embedding_model")
+    model = get_embedding_model() if query else None
     query_vector = None
     if query and model:
-        query_vector = model.encode(query)
+        try:
+            query_vector = model.encode(query)
+        except Exception:
+            query_vector = None
 
     seen_signatures = set()
     filtered_jobs = []
@@ -765,7 +775,7 @@ def search_jobs(
 def sync_jobs_now(background_tasks: BackgroundTasks):
     """Triggers real-time live scraping & auto-expiry sync asynchronously."""
     import live_sync
-    background_tasks.add_task(live_sync.run_sync_cycle, embedding_model=ml_models.get("embedding_model"))
+    background_tasks.add_task(live_sync.run_sync_cycle, embedding_model=get_embedding_model())
     return {
         "status": "initiated",
         "message": "Live incremental job sync and auto-expiry task has been started in the background."
