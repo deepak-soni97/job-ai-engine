@@ -19,8 +19,13 @@ load_dotenv()
 # Global container for model state
 ml_models = {}
 
+IS_RENDER = os.getenv("RENDER", "").lower() == "true"
+ENABLE_AI_EMBEDDINGS = os.getenv("ENABLE_AI_EMBEDDINGS", "false" if IS_RENDER else "true").lower() in ("true", "1", "yes")
+
 def get_embedding_model():
-    """Lazily loads SentenceTransformer on-demand to maintain minimal memory footprint."""
+    """Lazily loads SentenceTransformer on-demand if enabled, maintaining minimal memory footprint (<50MB)."""
+    if not ENABLE_AI_EMBEDDINGS:
+        return None
     if "embedding_model" not in ml_models:
         try:
             print("Lazily loading SentenceTransformer model...")
@@ -28,7 +33,7 @@ def get_embedding_model():
             ml_models["embedding_model"] = SentenceTransformer("all-MiniLM-L6-v2")
             print("SentenceTransformer loaded successfully.")
         except Exception as e:
-            print(f"Notice: SentenceTransformer not loaded ({e}). Semantic search fallback active.")
+            print(f"Notice: SentenceTransformer not loaded ({e}). Fast keyword/token search active.")
             ml_models["embedding_model"] = None
     return ml_models.get("embedding_model")
 
@@ -301,25 +306,33 @@ def evaluate_eligibility(
     hard_filters_passed = degree_matched and exp_matched
 
     # AI SEMANTIC MATCH
-    candidate_vec = model.encode(candidate.skills_summary)
-    # Truncate text to first 2500 characters to keep relevant job description content within transformer bounds
-    job_desc_vec = model.encode(job_description_text[:2500])
-
-    raw_similarity = compute_cosine_similarity(candidate_vec, job_desc_vec)
-    clean_score = max(0.0, min(1.0, raw_similarity))
-    match_percentage = round(clean_score * 100, 2)
+    if model is not None:
+        candidate_vec = model.encode(candidate.skills_summary)
+        # Truncate text to first 2500 characters to keep relevant job description content within transformer bounds
+        job_desc_vec = model.encode(job_description_text[:2500])
+        raw_similarity = compute_cosine_similarity(candidate_vec, job_desc_vec)
+        clean_score = max(0.0, min(1.0, raw_similarity))
+        match_percentage = round(clean_score * 100, 2)
+    else:
+        # Lightweight token overlap fallback for fast low-memory execution
+        cand_tokens = set(t for t in re.findall(r'[a-zA-Z0-9]+', candidate.skills_summary.lower()) if len(t) > 2)
+        job_tokens = set(t for t in re.findall(r'[a-zA-Z0-9]+', job_description_text[:2500].lower()) if len(t) > 2)
+        common = cand_tokens.intersection(job_tokens)
+        ratio = len(common) / max(1, len(cand_tokens)) if cand_tokens else 0.5
+        clean_score = max(0.2, min(0.95, ratio))
+        match_percentage = round(clean_score * 100, 2)
 
     # FINAL VERDICT
     if hard_filters_passed:
         if match_percentage >= 60.0:
             final_verdict = "Eligible & Highly Recommended"
             verdict_reasons.append(
-                f"Candidate satisfies all eligibility rules with strong semantic skill match ({match_percentage}%)."
+                f"Candidate satisfies all eligibility rules with strong skill match ({match_percentage}%)."
             )
         else:
             final_verdict = "Eligible but Moderate/Low Skill Match"
             verdict_reasons.append(
-                f"Candidate meets degree and experience requirements, but semantic skill match is below threshold ({match_percentage}% < 60%)."
+                f"Candidate meets degree and experience requirements, but skill match is below threshold ({match_percentage}% < 60%)."
             )
     else:
         final_verdict = "Not Eligible (Mandatory Criteria Failed)"
@@ -355,9 +368,6 @@ def health_check():
 @app.post("/check-job-match", response_model=EligibilityResponse)
 def check_job_match(request: JobEligibilityCheckRequest) -> EligibilityResponse:
     model = get_embedding_model()
-    if not model:
-        raise HTTPException(status_code=503, detail="AI Inference model is not ready")
-
     return evaluate_eligibility(
         candidate=request.candidate_profile,
         eligible_degrees=request.job_post.eligible_degrees,
@@ -372,9 +382,6 @@ def check_job_match(request: JobEligibilityCheckRequest) -> EligibilityResponse:
 @app.post("/match-from-url", response_model=EligibilityResponse)
 async def match_from_url(request: URLMatchRequest) -> EligibilityResponse:
     model = get_embedding_model()
-    if not model:
-        raise HTTPException(status_code=503, detail="AI Inference model is not ready")
-
     str_url = str(request.job_url)
     title, clean_text = await extract_clean_text_from_url(str_url, timeout_seconds=10.0)
     domain = urlparse(str_url).netloc
@@ -702,7 +709,8 @@ def search_jobs(
         if query:
             q = query.lower().strip()
             text_haystack = f"{job.get('title', '')} {job.get('department', '')} {job.get('sector', '')} {job.get('location', '')} {job.get('reqDegree', '')} {' '.join(job.get('tags', []))}".lower()
-            keyword_match = (q in text_haystack) or any(token in text_haystack for token in q.split() if len(token) > 2)
+            tokens = [token for token in re.findall(r'[a-zA-Z0-9]+', q) if len(token) >= 2]
+            keyword_match = (q in text_haystack) or (bool(tokens) and any(token in text_haystack for token in tokens))
             
             if not keyword_match:
                 if query_vector is not None and job_vec is not None:
@@ -744,10 +752,18 @@ def search_jobs(
         title_hit = 0
         if query:
             q_clean = query.lower().strip()
-            if q_clean in x.get("title", "").lower():
-                title_hit = 2
-            elif any(token in x.get("title", "").lower() for token in q_clean.split() if len(token) > 2):
-                title_hit = 1
+            t_lower = str(x.get("title", "")).lower()
+            d_lower = str(x.get("department", "")).lower()
+            tags_lower = " ".join(x.get("tags", [])).lower()
+            if q_clean in t_lower:
+                title_hit = 4
+            elif q_clean in d_lower or q_clean in tags_lower:
+                title_hit = 3
+            else:
+                tokens = [t for t in re.findall(r'[a-zA-Z0-9]+', q_clean) if len(t) >= 2]
+                if tokens:
+                    hit_count = sum(1 for tok in tokens if tok in t_lower or tok in d_lower or tok in tags_lower)
+                    title_hit = min(2, hit_count)
         sal = str(x.get("salary") or "").lower()
         has_real_sal = 1 if sal and "refer" not in sal else 0
         age = str(x.get("ageLimit") or "").lower()
