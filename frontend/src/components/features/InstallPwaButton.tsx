@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Smartphone, Download, Monitor, Share, PlusSquare, X, CheckCircle2, ArrowRight } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -12,6 +13,17 @@ export const InstallPwaButton: React.FC = () => {
   const [isIOS, setIsIOS] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  // Lock body scroll when modal is active
+  useEffect(() => {
+    if (showModal) {
+      const orig = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = orig;
+      };
+    }
+  }, [showModal]);
 
   useEffect(() => {
     // Check if already running in standalone PWA mode
@@ -92,14 +104,14 @@ export const InstallPwaButton: React.FC = () => {
         <Download className="w-3.5 h-3.5 text-blue-200 shrink-0" />
       </button>
 
-      {/* Visual Install Instructions Modal */}
-      {showModal && (
+      {/* Visual Install Instructions Modal (Rendered to document.body via Portal to prevent any stacking context clipping) */}
+      {showModal && typeof document !== 'undefined' && createPortal(
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in"
           onClick={() => setShowModal(false)}
         >
           <div 
-            className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl p-5 border border-slate-200 text-left"
+            className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl p-5 border border-slate-200 text-left animate-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -203,7 +215,8 @@ export const InstallPwaButton: React.FC = () => {
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
