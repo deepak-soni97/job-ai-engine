@@ -138,47 +138,47 @@ export const InstallPwaButton: React.FC = () => {
                 <div className="p-3.5 bg-blue-50/80 rounded-xl border border-blue-200 text-xs text-slate-700 leading-relaxed font-medium">
                   <div className="flex items-center gap-2 font-bold text-blue-900 mb-1.5">
                     <Monitor className="w-4 h-4 text-blue-600" />
-                    <span>PC / Laptop par Install karne ka direct tareeqa:</span>
+                    <span>How to Install on PC / Laptop:</span>
                   </div>
                   <p>
-                    Apne browser ke <strong>Address Bar (URL bar)</strong> ke right side me dekhiye — wahan star (⭐) ke pass ek <strong>Install Icon (💻↓)</strong> hai.
+                    Look at the right side of your browser's <strong>Address Bar (URL bar)</strong> — click the <strong>Install Icon (💻↓)</strong> located next to the bookmark star (⭐).
                   </p>
                 </div>
 
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2">
                   <div className="font-bold text-slate-800 flex items-center gap-1.5">
                     <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] shrink-0 font-bold">1</span>
-                    <span>Address Bar ke right side me <strong>Install</strong> icon par click karein.</span>
+                    <span>Click the <strong>Install</strong> icon in the address bar.</span>
                   </div>
                   <div className="font-bold text-slate-800 flex items-center gap-1.5">
                     <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] shrink-0 font-bold">2</span>
-                    <span>Screen par popup aane par <strong>Install</strong> button dabayein.</span>
+                    <span>Click <strong>Install</strong> when the confirmation prompt appears.</span>
                   </div>
                 </div>
 
                 <div className="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 text-[11px] text-emerald-800 font-medium flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>App bina browser bar ke desktop app ki tarah khul jayegi!</span>
+                  <span>The app will launch instantly in a standalone window!</span>
                 </div>
               </div>
             ) : isIOS ? (
               /* iOS Safari Guide */
               <div className="space-y-3 text-xs text-slate-700">
                 <p className="font-medium text-slate-600">
-                  Safari browser se iPhone/iPad home screen par install karein:
+                  Install to your iPhone or iPad Home Screen:
                 </p>
                 <ol className="space-y-2.5 font-semibold">
                   <li className="flex items-start gap-2.5 p-2 bg-slate-50 rounded-lg border border-slate-200">
                     <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] shrink-0 mt-0.5">1</span>
-                    <span>Niche <strong className="text-blue-700 inline-flex items-center gap-1"><Share className="w-3.5 h-3.5" /> Share</strong> button dabayein.</span>
+                    <span>Tap the <strong className="text-blue-700 inline-flex items-center gap-1"><Share className="w-3.5 h-3.5" /> Share</strong> button at the bottom of Safari.</span>
                   </li>
                   <li className="flex items-start gap-2.5 p-2 bg-slate-50 rounded-lg border border-slate-200">
                     <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] shrink-0 mt-0.5">2</span>
-                    <span>Scroll karke <strong className="text-slate-900 inline-flex items-center gap-1"><PlusSquare className="w-3.5 h-3.5" /> Add to Home Screen</strong> select karein.</span>
+                    <span>Scroll down and select <strong className="text-slate-900 inline-flex items-center gap-1"><PlusSquare className="w-3.5 h-3.5" /> Add to Home Screen</strong>.</span>
                   </li>
                   <li className="flex items-start gap-2.5 p-2 bg-slate-50 rounded-lg border border-slate-200">
                     <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] shrink-0 mt-0.5">3</span>
-                    <span>Upar right side me <strong className="text-blue-600">Add</strong> par click karein.</span>
+                    <span>Tap <strong className="text-blue-600">Add</strong> in the top-right corner to finish.</span>
                   </li>
                 </ol>
               </div>
@@ -186,20 +186,20 @@ export const InstallPwaButton: React.FC = () => {
               /* Android Mobile Guide */
               <div className="space-y-3 text-xs text-slate-700">
                 <p className="font-medium text-slate-600">
-                  Android mobile par install karne ke liye:
+                  Install directly on your Android device:
                 </p>
                 <ol className="space-y-2.5 font-semibold">
                   <li className="flex items-start gap-2.5 p-2 bg-slate-50 rounded-lg border border-slate-200">
                     <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] shrink-0 mt-0.5">1</span>
-                    <span>Chrome me top-right me <strong>3 dots (⋮)</strong> menu par tap karein.</span>
+                    <span>Tap the <strong>3 dots (⋮)</strong> menu in Chrome's top-right corner.</span>
                   </li>
                   <li className="flex items-start gap-2.5 p-2 bg-slate-50 rounded-lg border border-slate-200">
                     <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] shrink-0 mt-0.5">2</span>
-                    <span><strong>"Install app"</strong> ya <strong>"Add to Home screen"</strong> par tap karein.</span>
+                    <span>Select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</span>
                   </li>
                   <li className="flex items-start gap-2.5 p-2 bg-slate-50 rounded-lg border border-slate-200">
                     <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] shrink-0 mt-0.5">3</span>
-                    <span>Popup me <strong>Install</strong> dabayein. Done!</span>
+                    <span>Tap <strong>Install</strong> on the confirmation prompt.</span>
                   </li>
                 </ol>
               </div>
