@@ -4,11 +4,18 @@ import { isAllSelection } from '../constants';
 export type { SearchParams, PaginatedResponse };
 
 const getApiBaseUrl = (): string => {
-  if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '');
+  const currentHost = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost';
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+
+  if (envUrl) {
+    let cleanUrl = envUrl.replace(/\/+$/, '');
+    // If env URL is pointing to localhost/127.0.0.1, but user is testing on mobile via LAN IP (e.g. 192.168.x.x):
+    if (currentHost !== 'localhost' && currentHost !== '127.0.0.1' && !cleanUrl.startsWith('https://')) {
+      cleanUrl = cleanUrl.replace('localhost', currentHost).replace('127.0.0.1', currentHost);
+    }
+    return cleanUrl;
   }
-  const host = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost';
-  return `http://${host}:8000`;
+  return `http://${currentHost}:8000`;
 };
 
 export const fetchJobs = async (params: SearchParams): Promise<PaginatedResponse> => {
