@@ -1,11 +1,12 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
+import { InstallPwaButton } from '../features/InstallPwaButton';
 
 export const Header: React.FC = () => {
   return (
     <header className="pt-14 pb-10 px-4 text-center max-w-4xl mx-auto relative z-10">
-      {/* Brand Header Bar / Logo Badge */}
-      <div className="flex justify-center mb-6">
+      {/* Brand Header Bar / Logo Badge & Install App */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
         <div className="inline-flex items-center gap-3.5 px-5 py-2.5 bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-sm hover:shadow-md transition-all">
           <img 
             src="/favicon.svg" 
@@ -24,6 +25,8 @@ export const Header: React.FC = () => {
             </div>
           </div>
         </div>
+
+        <InstallPwaButton />
       </div>
 
       <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-blue-50/80 backdrop-blur-sm border border-blue-100 rounded-full text-blue-700 font-semibold text-xs mb-5 shadow-sm">
