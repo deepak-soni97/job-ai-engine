@@ -9,11 +9,19 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 )
 
-// Register PWA Service Worker for offline support and mobile installability
+// Register PWA Service Worker in production only, unregister in dev to prevent cache conflicts
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch((err) => {
-      console.warn('PWA service worker registration notice:', err);
+  if (import.meta.env.PROD) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch((err) => {
+        console.warn('PWA service worker registration notice:', err);
+      });
     });
-  });
+  } else {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
 }
